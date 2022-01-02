@@ -218,7 +218,7 @@ def find_most_simmilar(image: ndarray, train_set: List[TrainRanks]) -> Tuple[str
     return best_name, best_match_diff
 
 
-def find_coins(image: ndarray) -> List[List[Coin], List[Coin]]:
+def find_coins(image: ndarray) -> List[List[Coin]]:
     coins = [[], []]
     circles = cv2.HoughCircles(image, cv2.HOUGH_GRADIENT, 1, 80, param1=32, param2=32, minRadius=50, maxRadius=70)
     # ensure at least som e circles were found

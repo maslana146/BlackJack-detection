@@ -21,7 +21,7 @@ def draw_results(image: ndarray, q_card: QueryCard) -> ndarray:
     suit_name = q_card.best_suit_match
 
     if rank_name != "Unknown" or suit_name != "Unknown":
-        if suit_name != 'reverse' and suit_name != 'deck':
+        if suit_name != 'everse' and suit_name != 'deck':
             cv2.circle(image, (x, y), 5, (255, 0, 0), -1)
 
             cv2.putText(image, (rank_name + ' of'), (x - 60, y - 10), FONT, 1, (0, 0, 0), 4, cv2.LINE_AA)
@@ -86,7 +86,7 @@ def main_logic(new_frame: ndarray, search: bool, new_game: Optional[Game], new_w
         Tuple[ndarray, List, bool, dict]:
     global game
     if new_game:  # at the begging, or when is nessesery, create  new game
-        players = [Player('dealer'), Player('player1'), Player('player2')]
+        players = [Player('Dealer'), Player('Player1'), Player('Player2')]
         game = Game(players)
         new_game = False
 
@@ -138,7 +138,7 @@ def main_logic(new_frame: ndarray, search: bool, new_game: Optional[Game], new_w
             if game.has_game_concluded() and new_game is False:
                 new_winners['who'] = game.who_win()
                 new_winners['time'] = 12
-                print(new_winners)
+                print(f'New winners: {new_winners}')
         else:
             if new_winners['time'] > 0:
                 new_winners['time'] -= 1
@@ -160,12 +160,13 @@ if __name__ == "__main__":
     new_game = True
     game = None
     winners = {'who': [], 'time': 0}
+    print('Program is running...')
     while cap.isOpened():
         ret, frame = cap.read()
         frames_count += 1
         # if frame is read correctly ret is True
         if not ret:
-            print("Can't receive frame (stream end?). Exiting ...")
+            print("Can't receive frame (stream end?). \nExiting ...")
             break
         last_frame = frame
         if frames_count % 15 == 0:  # search for cards only on every 15's frame
