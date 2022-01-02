@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import cv2
 from config import *
@@ -7,12 +7,12 @@ from src.models.Game import Game
 from src.models.Player import Player
 from numpy import ndarray
 
-from src.models.QueryCard import Query_card
+from src.models.QueryCard import QueryCard
 
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 
 
-def draw_results(image: ndarray, q_card: Query_card) -> ndarray:
+def draw_results(image: ndarray, q_card: QueryCard) -> ndarray:
     """Draw the card name, center point, and contour on the camera image."""
 
     x = q_card.center[0]
@@ -21,7 +21,7 @@ def draw_results(image: ndarray, q_card: Query_card) -> ndarray:
     suit_name = q_card.best_suit_match
 
     if rank_name != "Unknown" or suit_name != "Unknown":
-        if suit_name != 'rewers' and suit_name != 'deck':
+        if suit_name != 'reverse' and suit_name != 'deck':
             cv2.circle(image, (x, y), 5, (255, 0, 0), -1)
 
             cv2.putText(image, (rank_name + ' of'), (x - 60, y - 10), FONT, 1, (0, 0, 0), 4, cv2.LINE_AA)
@@ -70,7 +70,7 @@ def draw_coins(image: ndarray, game: Game) -> ndarray:
     return image
 
 
-def draw_winners(image: ndarray, new_winners: List[str]):
+def draw_winners(image: ndarray, new_winners: List[str]) -> ndarray:
     if len(new_winners) > 0:
         cv2.putText(image, 'The winners are(is):', (200, IM_HEIGHT // 2 - 100), FONT, 5, (0, 0, 0), 6, cv2.LINE_AA)
         cv2.putText(image, 'The winners are(is):', (200, IM_HEIGHT // 2 - 100), FONT, 5, (0, 255, 255), 4, cv2.LINE_AA)
@@ -82,7 +82,8 @@ def draw_winners(image: ndarray, new_winners: List[str]):
     return image
 
 
-def main_logic(new_frame: ndarray, search: bool, new_game: Optional[Game], new_winners: dict, debug=False):
+def main_logic(new_frame: ndarray, search: bool, new_game: Optional[Game], new_winners: dict, debug=False) -> \
+        Tuple[ndarray, List, bool, dict]:
     global game
     if new_game:  # at the begging, or when is nessesery, create  new game
         players = [Player('dealer'), Player('player1'), Player('player2')]
@@ -103,11 +104,11 @@ def main_logic(new_frame: ndarray, search: bool, new_game: Optional[Game], new_w
         game.coins = find_coins(pre_proc)
         game.cards = cards
 
-        game.search_deck()  # find deck and rewers
+        game.search_deck()  # find deck and reverse
         game.clean_cards()  # deleate all non card from cards
         game.restore_cards()  # restore cards from prev iter
         game.restore_coins()  # restore coins from prev iter
-        game.add_deck()  # add deck and rewers
+        game.add_deck()  # add deck and reverse
 
         game.count_cards()
         game.search_action()  # search for basic actions
