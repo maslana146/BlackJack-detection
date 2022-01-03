@@ -148,34 +148,37 @@ def main_logic(new_frame: ndarray, search: bool, new_game: Optional[Game], new_w
 
 
 if __name__ == "__main__":
-    train_ranks = load_ranks('../Card_Imgs/')
-    train_suits = load_suits('../Card_Imgs/')
-    cap = cv2.VideoCapture('../Test_Video/easy1.mp4')
+    train_ranks = load_ranks('Card_Imgs/')
+    train_suits = load_suits('Card_Imgs/')
+    cap = cv2.VideoCapture('video/idk3.mp4')
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    print(total)
-    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-    out = cv2.VideoWriter('../Output_Video/easy1.mp4', fourcc, 30.0, (1920, 1080))
+    if total == 0:
+        print('Video was not found')
+    else:
+    # print(total)
+        fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+        out = cv2.VideoWriter('output/idk3.mp4', fourcc, 30.0, (1920, 1080))
 
-    frames_count = 0
-    last_frame = None
-    new_game = True
-    game = None
-    winners = {'who': [], 'time': 0}
-    print('Program is running...')
-    while cap.isOpened():
-        ret, frame = cap.read()
-        frames_count += 1
-        # if frame is read correctly ret is True
-        if not ret:
-            print("Can't receive frame (stream end?). \nExiting ...")
-            break
-        last_frame = frame
-        if frames_count % 15 == 0:  # search for cards only on every 15's frame
-            frame, cards, new_game, winners = main_logic(frame, True, new_game, winners)
-        else:
-            frame, cards, new_game, winners = main_logic(frame, False, new_game, winners)
-        out.write(frame)
-        if cv2.waitKey(1) == ord('q'):
-            break
-    cap.release()
-    out.release()
+        frames_count = 0
+        last_frame = None
+        new_game = True
+        game = None
+        winners = {'who': [], 'time': 0}
+        print('Program is running...')
+        while cap.isOpened():
+            ret, frame = cap.read()
+            frames_count += 1
+            # if frame is read correctly ret is True
+            if not ret:
+                print("Can't receive frame (stream end?). \nExiting ...")
+                break
+            last_frame = frame
+            if frames_count % 15 == 0:  # search for cards only on every 15's frame
+                frame, cards, new_game, winners = main_logic(frame, True, new_game, winners)
+            else:
+                frame, cards, new_game, winners = main_logic(frame, False, new_game, winners)
+            out.write(frame)
+            if cv2.waitKey(1) == ord('q'):
+                break
+        cap.release()
+        out.release()
