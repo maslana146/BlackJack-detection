@@ -64,8 +64,6 @@ def find_cards(thresh_image: ndarray) -> List[ndarray]:
 
     # Find contours and sort their indices by contour size
     cnts, hier = cv2.findContours(thresh_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    # TODO
-    # index_sort = sorted(range(len(cnts)), key=lambda i: cv2.contourArea(cnts[i]), reverse=True)
 
     # If there are no contours, do nothing
     if len(cnts) == 0:
@@ -105,10 +103,6 @@ def preprocess_card(contour: ndarray, image: ndarray, show: bool = True) -> Quer
 
     # Find width and height of card's bounding rectangle
     x, y, w, h = cv2.boundingRect(contour)
-    if show: image_copy = image.copy()
-    if show: cv2.rectangle(image_copy, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    if show: imshow(image_copy)
-
     q_card.width, q_card.height = w, h
 
     # Find center point of card by taking x and y average of the four corners.
@@ -129,20 +123,15 @@ def preprocess_card(contour: ndarray, image: ndarray, show: bool = True) -> Quer
 
     # Warp card into 200x300 flattened image using perspective transform
     q_card.warp = flattener(image, pts, w, h)
-    if show: imshow(q_card.warp)
 
     # Grab corner of warped card image and do a 4x zoom
     q_corner = q_card.warp[0:CORNER_HEIGHT, 0:CORNER_WIDTH]
     q_corner_zoom = cv2.resize(q_corner, (0, 0), fx=4, fy=4)
-    if show: imshow(q_corner_zoom)
-    # Sample known white pixel intensity to determine good threshold level
 
+    # Sample known white pixel intensity to determine good threshold level
     # this adaptiveThreshold may need some tunning
     query_thresh = cv2.adaptiveThreshold(q_corner_zoom, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 91,
                                          8)
-
-    if show: imshow(query_thresh)
-
     # Split in to top and bottom half (top shows rank, bottom shows suit)
     q_rank = query_thresh[20:195, 0:128]
     q_suit = query_thresh[195:336, 0:128]
@@ -153,8 +142,8 @@ def preprocess_card(contour: ndarray, image: ndarray, show: bool = True) -> Quer
 
 
 def find_bounds(q: ndarray, width: int, height: int) -> ndarray:
-    """Find countour and bounding rectangle, isolate and find largest contour and use
-        it to resize image to match dimensions"""
+    """Find contour and bounding rectangle, isolate and find largest contour and use
+        it to resize image to match dimensions. If no contours is find, return empty list"""
 
     cnts, hier = cv2.findContours(q, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
@@ -163,7 +152,6 @@ def find_bounds(q: ndarray, width: int, height: int) -> ndarray:
         roi = q[y:y + h, x:x + w]
         sized = cv2.resize(roi, (width, height), 0, 0)
         return sized
-    # TODO czemu zwraczasz tu pustą liste? albo ndarray?
     return []
 
 
@@ -177,8 +165,6 @@ def match_card(q_card: QueryCard, train_ranks: List[TrainRanks], train_suits: Li
     best_suit_match_diff = 10000
     best_rank_match_name = "Unknown"
     best_suit_match_name = "Unknown"
-    # TODO Co to to i?
-    i = 0
 
     # If no contours were found in query card in preprocess_card function,
     # the img size is zero, so skip the differencing process

@@ -138,7 +138,6 @@ def main_logic(new_frame: ndarray, search: bool, new_game: Optional[Game], new_w
             if game.has_game_concluded() and new_game is False:
                 new_winners['who'] = game.who_win()
                 new_winners['time'] = 12
-                print(f'New winners: {new_winners}')
         else:
             if new_winners['time'] > 0:
                 new_winners['time'] -= 1
@@ -151,10 +150,12 @@ def main_logic(new_frame: ndarray, search: bool, new_game: Optional[Game], new_w
 if __name__ == "__main__":
     train_ranks = load_ranks('../Card_Imgs/')
     train_suits = load_suits('../Card_Imgs/')
-    cap = cv2.VideoCapture('easy1 (1).mp4')
+    cap = cv2.VideoCapture('../Test_Video/easy1.mp4')
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    print(total)
     fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-    out = cv2.VideoWriter('output_video.mp4', fourcc, 30.0, (1920, 1080))
+    out = cv2.VideoWriter('../Output_Video/easy1.mp4', fourcc, 30.0, (1920, 1080))
+
     frames_count = 0
     last_frame = None
     new_game = True
