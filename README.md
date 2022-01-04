@@ -1,5 +1,9 @@
 # Black Jack Card Game Detector
 
+*Authors*
+- Kajetan Kubik 145451
+- Bartosz Maślanka 144091
+
 *Prerequisites:*
 - Python 3.8
 
