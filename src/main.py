@@ -21,7 +21,7 @@ def draw_results(image: ndarray, q_card: QueryCard) -> ndarray:
     suit_name = q_card.best_suit_match
 
     if rank_name != "Unknown" or suit_name != "Unknown":
-        if suit_name != 'everse' and suit_name != 'deck':
+        if suit_name != 'reverse' and suit_name != 'deck':
             cv2.circle(image, (x, y), 5, (255, 0, 0), -1)
 
             cv2.putText(image, (rank_name + ' of'), (x - 60, y - 10), FONT, 1, (0, 0, 0), 4, cv2.LINE_AA)
